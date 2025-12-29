@@ -300,9 +300,11 @@ def get_package_metadata(f: typing.BinaryIO,
     if pkg_license is not None:
         pkg_license = cargo_to_spdx(pkg_license)
 
+    #missing version field is legal in rust >= 1.75 and defaults to 0.0.0:
+    #https://doc.rust-lang.org/cargo/reference/manifest.html#the-version-field
     pkg_version = _get_meta_key("version")
     if pkg_version is None:
-        raise ValueError(f"No version found in {f.name}")
+        pkg_version = "0.0.0"
 
     features = cargo_toml.get("features", {})
     default_features = features.pop("default", [])
